@@ -5,32 +5,6 @@ import (
 	"math/rand/v2"
 )
 
-// We define types for the Gene, Organism, and Population.
-
-type gene struct {
-	tailNode int
-	headNode int
-}
-
-func (g *gene) equals(another gene) bool {
-	return g.tailNode == another.tailNode && g.headNode == another.headNode
-}
-
-// A genotype is an ordered list of two dimensional vectors in our application
-type genotype []gene
-
-func (g *genotype) equals(another genotype) bool {
-	if len(*g) != len(another) {
-		return false
-	}
-	for i, gene := range *g {
-		if !gene.equals(another[i]) {
-			return false
-		}
-	}
-	return true
-}
-
 type organism struct {
 	genotype genotype
 	fitness  float64
@@ -40,7 +14,7 @@ type population struct {
 	organisms []organism
 }
 
-// We define a random number generator, injectable for testing
+// We define a random number generator, injectable for testing. Random numbers are float64s between 0 and 1.
 
 type randomiser interface {
 	random() float64
@@ -53,7 +27,7 @@ func (r *defaultRandomiser) random() float64 {
 }
 
 // Defining the shape of a fitness function. We will not be using tournament selection, so the function will not need
-// the rest of the population.
+// the rest of the population as a parameter.
 
 type FitnessFunction func(org organism) float64
 
@@ -87,5 +61,38 @@ func (ga *GeneticAlgorithm) Run() {
 // Functions of a Genetic Algorithm
 
 func breed(parents [2]organism, rand randomiser, crossoverRate float64, mutationRate float64) [2]organism {
-	return [2]organism{organism{}, organism{}}
+
+	var child [2]organism
+
+	// Either do the crossover, or just clone the parents
+	trigger := rand.random()
+
+	if trigger < crossoverRate {
+		child[0] = crossover(parents, rand)
+		child[1] = crossover(parents, rand)
+	} else {
+		child[0] = parents[0]
+		child[1] = parents[1]
+	}
+
+	// Mutation happens to all organisms
+	geneticMutation(&child[0], rand, mutationRate)
+	geneticMutation(&child[1], rand, mutationRate)
+
+	return child
+}
+
+func crossover(parents [2]organism, rand randomiser) organism {
+	return organism{}
+}
+
+func geneticMutation(org *organism, rand randomiser, mutationRate float64) {
+
+	// use a for loop with range to iterate over the genotype of the organism
+	for i, gene := range org.genotype {
+		if rand.random() < mutationRate {
+			org.genotype[i] = gene.mutate(rand)
+		}
+	}
+
 }

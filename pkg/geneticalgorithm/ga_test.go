@@ -64,9 +64,7 @@ func TestBreedWithoutCrossoverOrMutation(t *testing.T) {
 
 func TestBreedWithCrossover(t *testing.T) {
 
-	t.Skip("Not implemented yet")
-
-	// We test breeding with crossover
+	// We test breeding with crossover. The 100% crossover probability will always be higher than the random number generated
 	crossoverRate := 1.0
 	mutationRate := 0.0
 

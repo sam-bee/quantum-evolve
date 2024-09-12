@@ -44,9 +44,8 @@ var template = quantumGatesTemplate{
 	},
 }
 
-
 type circuitDesign struct {
-	genotype genotype
+	genotype  genotype
 	phenotype phenotype
 }
 
