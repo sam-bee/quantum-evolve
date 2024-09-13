@@ -24,6 +24,6 @@ func (g *gene) equals(another gene) bool {
 	return g.tailNode == another.tailNode && g.headNode == another.headNode
 }
 
-func (g *gene) mutate(rand randomiser) gene {
-	return gene{tailNode: int(rand.random()), headNode: int(rand.random())}
+func (g *gene) mutate(rand randomiser) {
+	// return gene{tailNode: int(rand.random()), headNode: int(rand.random())}
 }

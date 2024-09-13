@@ -2,7 +2,6 @@ package geneticalgorithm
 
 import (
 	"fmt"
-	"math/rand/v2"
 )
 
 type organism struct {
@@ -12,18 +11,6 @@ type organism struct {
 
 type population struct {
 	organisms []organism
-}
-
-// We define a random number generator, injectable for testing. Random numbers are float64s between 0 and 1.
-
-type randomiser interface {
-	random() float64
-}
-
-type defaultRandomiser struct{}
-
-func (r *defaultRandomiser) random() float64 {
-	return rand.Float64()
 }
 
 // Defining the shape of a fitness function. We will not be using tournament selection, so the function will not need
@@ -60,16 +47,16 @@ func (ga *GeneticAlgorithm) Run() {
 
 // Functions of a Genetic Algorithm
 
-func breed(parents [2]organism, rand randomiser, crossoverRate float64, mutationRate float64) [2]organism {
+func breed(parents [2]organism, rand randomiser, crossoverRate float64, mutationRate float64, genotypeLen int) [2]organism {
 
 	var child [2]organism
 
 	// Either do the crossover, or just clone the parents
-	trigger := rand.random()
+	trigger := rand.randFloat64()
 
 	if trigger < crossoverRate {
-		child[0] = crossover(parents, rand)
-		child[1] = crossover(parents, rand)
+		child[0] = crossover(parents, genotypeLen, 1, rand)
+		child[1] = crossover(parents, genotypeLen, 1, rand)
 	} else {
 		child[0] = parents[0]
 		child[1] = parents[1]
@@ -82,17 +69,17 @@ func breed(parents [2]organism, rand randomiser, crossoverRate float64, mutation
 	return child
 }
 
-func crossover(parents [2]organism, rand randomiser) organism {
+// @todo Not implemented yet
+func crossover(parents [2]organism, geneLen int, crossoverCount int, rand randomiser) organism {
 	return organism{}
 }
 
 func geneticMutation(org *organism, rand randomiser, mutationRate float64) {
 
 	// use a for loop with range to iterate over the genotype of the organism
-	for i, gene := range org.genotype {
-		if rand.random() < mutationRate {
-			org.genotype[i] = gene.mutate(rand)
+	for i := range org.genotype {
+		if rand.randFloat64() < mutationRate {
+			org.genotype[i].mutate(rand)
 		}
 	}
-
 }
